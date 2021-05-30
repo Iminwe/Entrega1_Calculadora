@@ -1,22 +1,220 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Calculadora</title>
   <meta charset="utf-8">
   <script type="text/javascript">
+
+    let aux = 0;
+    let operator = "";
+
     const vaciar = () => {
       document.getElementById("pantalla").value = "";
     }
 
-    const cuadrado = () => {
+    const rellenar_info = () => {
       let num = document.getElementById("pantalla");
-      num.value = num.value * num.value;
+      let myinfo = document.getElementById("info");
+      let message = "";
+      if (num.value < 100) {
+        message = "Info: El resultado es menor que 100";
+      } else if (num.value < 200) {
+        message = "Info: El resultado está entre 100 y 200";
+      } else {
+        message = "Info: El resultado es superior a 200";
+      }
+      myinfo.innerHTML = message;
     }
+
+    //Esta función devuelve TRUE o FALSE según sea un número o no
+    const validar = (csvadmitted) => {
+      let num = document.getElementById("pantalla");
+      let valid = false;
+      if (csvadmitted) {
+        //Cortamos por la ",", lo convertimos en array y filtramos los elementos que no son números
+        //Si en el array resultante queda algo (si no es igual a 0), significa que no es válido porque algo ha dado TRUE a "isNaN"
+        valid = num.value.split(",").map(a => parseFloat(a)).filter(isNaN).length === 0;
+      } else {
+        valid = !isNaN(num.value);
+      }
+      if (!valid) {
+        num.value = "Error";
+      }
+      return valid;
+    }
+
+    const cuadrado = () => {
+      if (validar()) {
+        let num = document.getElementById("pantalla");
+        num.value = num.value * num.value;
+        rellenar_info();
+      }
+    }
+
+    const mod = () => {
+      if (validar()) {
+        let num = document.getElementById("pantalla");
+        num.value = Math.abs(num.value)
+        rellenar_info();
+      }
+    }
+
+    const fact = () => {
+      if (validar()) {
+        let num = document.getElementById("pantalla");
+        let factorial = 1;
+        for (let index = num.value; index > 1; index--) {
+          factorial = factorial * index;
+        }
+        num.value = factorial;
+        rellenar_info();
+      }
+    }
+
+    const add = () => {
+      if (validar()) {
+        let num = document.getElementById("pantalla");
+        aux = num.value;
+        operator = "+";
+      }
+    }
+
+    const sub = () => {
+      if (validar()) {
+        let num = document.getElementById("pantalla");
+        aux = num.value;
+        operator = "-";
+      }
+    }
+
+    const mul = () => {
+      if (validar()) {
+        let num = document.getElementById("pantalla");
+        aux = num.value;
+        operator = "*";
+      }
+    }
+
+    const div = () => {
+      if (validar()) {
+        let num = document.getElementById("pantalla");
+        aux = num.value;
+        operator = "/";
+      }
+    }
+
+    const rest = () => {
+      if (validar()) {
+        let num = document.getElementById("pantalla");
+        aux = num.value;
+        operator = "%";
+      }
+    }
+
+    const pot = () => {
+      if (validar()) {
+        let num = document.getElementById("pantalla");
+        aux = num.value;
+        operator = "^";
+      }
+    }
+
+    const eq = () => {
+      if (validar()) {
+        let num = document.getElementById("pantalla");
+        switch (operator) {
+          case "+":
+            num.value = +aux + +num.value;
+            rellenar_info();
+            break;
+          case "-":
+            num.value = +aux - +num.value;
+            rellenar_info();
+            break;
+          case "*":
+            num.value = +aux * +num.value;
+            rellenar_info();
+            break;
+          case "/":
+            num.value = +aux / +num.value;
+            rellenar_info();
+            break;
+          case "%":
+            num.value = +aux % +num.value;
+            rellenar_info();
+            break;
+          case "^":
+            let potencia = 1;
+            for (let index = num.value; index > 0; index--) {
+              potencia = potencia * +aux;
+            }
+            num.value = potencia;
+            rellenar_info();
+            break;
+          default:
+        }
+      }
+    }
+
+    const sumatorio = () => {
+      if (validar(true)) {
+        let num = document.getElementById("pantalla");
+        num.value = num.value.split(",").map(elem => parseFloat(elem)).reduce((a, b) => a + b, 0);
+        rellenar_info();
+      }
+    }
+
+    const ordenar = () => { 
+      if (validar(true)) {
+        let num = document.getElementById("pantalla");
+        num.value = num.value.split(",").map(elem => parseFloat(elem)).sort();
+        //num.value = num.value.split(",").map(elem => parseFloat(elem)).sort((a,b)=>a-b).join(",");
+      }
+    }
+
+    const revertir = () => {
+      if (validar(true)) {
+        let num = document.getElementById("pantalla");
+        num.value = num.value.split(",").map(elem => parseFloat(elem)).reverse();
+        //num.value = num.value.split(",").map(elem => parseFloat(elem)).reverse().join(",");
+      }
+    }
+
+    const quitar = () => {
+      if (validar(true)) {
+        let num = document.getElementById("pantalla");
+        aux = num.value.split(",").map(elem => parseFloat(elem));
+        //num.value=aux.splice(0,(aux.length-1))
+        aux.pop();
+        num.value = aux;
+      }
+    }
+
   </script>
 </head>
+
 <body>
-  Número:
+  <h1>Número:</h1>
   <input type="text" id="pantalla" onclick="vaciar()">
+  <h2 id="info" class="grande" title="Info sobre el número">Info sobre el número</h2>
+  <h3 id="opuni" class="grande" title="Operaciones unitarias">Operaciones unitarias</h3>
   <button id="cuadrado" onclick="cuadrado()">x<sup>2</sup></button>
- </body>
+  <button id="modulo" onclick="mod()">|x|</button>
+  <button id="factorial" onclick="fact()">x!</button>
+  <h3 id="opbin" class="grande" title="Operaciones binarias">Operaciones binarias</h3>
+  <button id="suma" onclick="add()">+</button>
+  <button id="resta" onclick="sub()">-</button>
+  <button id="multiplicacion" onclick="mul()">*</button>
+  <button id="division" onclick="div()">/</button>
+  <button id="resto" onclick="rest()">%</button>
+  <button id="potencia" onclick="pot()">^</button>
+  <button id="igual" onclick="eq()">=</button>
+  <h3 id="opcsv" class="grande" title="Operaciones con CSV">Operaciones con CSV</h3>
+  <button id="sumatorio" onclick="sumatorio()">Σ</button>
+  <button id="ordenar" onclick="ordenar()">⥂</button>
+  <button id="revertir" onclick="revertir()">⇄</button>
+  <button id="quitar" onclick="quitar()">DEL</button>
+</body>
+
 </html>
